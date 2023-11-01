@@ -152,7 +152,8 @@ const Cart = () => {
                                             <tr>
                                                 <th>Qiymət</th>
                                                 <td style={{ fontWeight: "700" }}>
-                                                    £{totalPrice && totalPrice < 0 ? 0 : totalPrice}
+                                                    ₼ {totalPrice && totalPrice < 0 ? 0 : totalPrice}
+                                                    
                                                 </td>
                                             </tr>
                                         </tbody>

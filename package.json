@@ -37,6 +37,7 @@
     "read-more-react": "^1.0.10",
     "redux-thunk": "^2.4.2",
     "sass": "^1.56.1",
+    "sweetalert2": "^11.9.0",
     "swiper": "^8.4.5",
     "web-vitals": "^2.1.4"
   },
