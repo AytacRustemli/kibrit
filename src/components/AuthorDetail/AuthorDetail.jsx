@@ -17,7 +17,6 @@ const AuthorDetail = () => {
             .then((res) => res.json())
             .then((data) => setAuthor(data.message));
     };
-
     useEffect(() => {
         getAuthor();
         dispatch(fetchBook());
@@ -49,6 +48,7 @@ const AuthorDetail = () => {
                                     <p>{author.description}</p>
                                 </div>
                                 <div className="col-lg-8">
+                                    <h3>Yazarın digər kitabları</h3>
                                     <div className="row">
                                         {
                                             data &&

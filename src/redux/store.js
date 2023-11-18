@@ -5,6 +5,8 @@ import favoriteSlice from "./Reducer/favoriteSlice";
 import genreSlice from "./Reducer/genreSlice";
 import productsSlice from "./Reducer/productsSlice";
 import { UserReducer } from "./Reducer/UserReducer";
+import { addCheckOutReducer } from "./Reducer/CheckOutReducer";
+
 
 const store = configureStore({
     reducer: {
@@ -13,7 +15,8 @@ const store = configureStore({
         products: productsSlice,
         genre: genreSlice,
         favories : favoriteSlice,
-        author : authorSlice
+        author : authorSlice,
+        checkout: addCheckOutReducer
     }
 })
 

@@ -51,7 +51,7 @@ const GenreDetail = () => {
                                     data &&
                                     data.filter((x) => x.genreName === genre.name)
                                         .map((book) => (
-                                            <div className="col-lg-4">
+                                            <div className="col-lg-3">
                                                 <div className="box">
                                                     <div className="image" key={book.id}>
                                                         <Link to={"/book/" + book.id}>

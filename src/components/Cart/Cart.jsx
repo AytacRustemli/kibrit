@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { getCartTotal, removeItem, decreaseItemQuantity, increaseItemQuantity, } from '../../redux/Reducer/cartSlice'
 import Cards from 'react-credit-cards-2';
 import './cart.scss'
 import 'react-credit-cards-2/dist/es/styles-compiled.css';
 import { FILE_PATH } from '../../api/config';
+import Swal from 'sweetalert2';
+import { CheckOutAction } from '../../redux/Actions/CheckOutAction';
+import { getUserAction } from '../../redux/Actions/UserAction';
 
 const Cart = () => {
-    const { cart, totalQuantity, totalPrice } = useSelector((state) => state.cart)
+    const { cart, totalQuantity, totalPrice } = useSelector((state) => state.cart);
+    const { userInfo } = useSelector((state) => state.user);
+    const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const [state, setState] = useState({
@@ -20,8 +25,64 @@ const Cart = () => {
     });
     const [showCardDetails, setShowCardDetails] = useState(false);
 
+
+    const addOrder = () => {
+        if (userInfo.length !== 0) {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger",
+                },
+                buttonsStyling: false,
+            });
+            swalWithBootstrapButtons
+                .fire({
+                    title: "Sifarisi tamamlamaq istediyinizden eminsiniz?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Sifarisi tamamla",
+                    cancelButtonText: "Legv et!",
+                    reverseButtons: true,
+                })
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        if (cart.length > 0) {
+                            dispatch(CheckOutAction(userInfo.id));
+                            //   dispatch(removeAllCartAction());
+                            setShowCardDetails(true);
+                        }
+                        else {
+                            Swal.fire("Səbətiniz boşdur.");
+                            navigate("/cart");
+                        }
+                    }
+                    else if (
+                        /* Read more about handling dismissals below */
+                        result.dismiss === Swal.DismissReason.cancel
+                    ) {
+                        swalWithBootstrapButtons.fire(
+                            "Ləğv olundu.",
+                            "error"
+                        );
+                    }
+                });
+        }
+        else {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Evvelce daxil olmalisiniz!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    navigate("/auth");
+                }
+            });
+        }
+    };
+
     useEffect(() => {
         dispatch(getCartTotal());
+        dispatch(getUserAction());
     }, [cart]);
 
     const handleCopyNumber = () => {
@@ -153,15 +214,20 @@ const Cart = () => {
                                                 <th>Qiymət</th>
                                                 <td style={{ fontWeight: "700" }}>
                                                     ₼ {totalPrice && totalPrice < 0 ? 0 : totalPrice}
-                                                    
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>İlkin ödəniş</th>
+                                                <td style={{ fontWeight: "700" }}>
+                                                    ₼  {totalPrice / 2}
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
                                     <div className="deneme">
-                                        <span className='shop' onClick={() => setShowCardDetails(true)}>Sifarişi tamamla</span>
+                                        {/* <span className='shop' onClick={() => setShowCardDetails(true)}>Sifarişi tamamla</span> */}
+                                        <span className='shop' onClick={() => addOrder()}>Sifarişi tamamla</span>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -198,7 +264,6 @@ const Cart = () => {
                             </div>
                         </div>
                     )}
-
                 </div>
             </div>
         </div >

@@ -9,18 +9,11 @@ import StarIcon from "@mui/icons-material/Star";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
 import { FaStar } from "react-icons/fa";
 import React, { useEffect, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/scss/navigation";
-import "swiper/scss";
-import "swiper/scss/pagination";
-import { Navigation, Scrollbar, A11y } from "swiper";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { BASE_URL, FILE_PATH } from '../../api/config'
 import { addToCart, decreaseItemQuantity, getCartTotal, increaseItemQuantity } from "../../redux/Reducer/cartSlice";
-import { toast } from "react-toastify";
-import { addToFavories } from "../../redux/Reducer/favoriteSlice";
-import Carousel from "react-multi-carousel";
+
 
 const colors = {
   orange: "#FFBA5A",
@@ -30,7 +23,6 @@ const colors = {
 const BookDetail = () => {
   const { id } = useParams();
   const [book, setBooks] = useState([]);
-  const data = useSelector(state => state.cart.data.message) || []
   const [photo, setPhoto] = useState([]);
   const [userName, setUserName] = useState("");
   const [review, setReview] = useState("");
@@ -40,22 +32,6 @@ const BookDetail = () => {
   const [hoverValue, setHoverValue] = useState(undefined);
   const [value, setValue] = useState("1");
   const dispatch = useDispatch();
-
-  console.log(data);
-  const responsive = {
-    desktop: {
-      breakpoint: { max: 3000, min: 1024 },
-      items: 4,
-    },
-    tablet: {
-      breakpoint: { max: 1024, min: 464 },
-      items: 2,
-    },
-    mobile: {
-      breakpoint: { max: 464, min: 0 },
-      items: 1,
-    },
-  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -81,7 +57,7 @@ const BookDetail = () => {
         userEmail: email,
         review: review,
         ratings: currentValue,
-        productId: id,
+        bookId: id,
       }),
     });
   };
@@ -126,7 +102,7 @@ const BookDetail = () => {
     return <>{star.map((e) => e)}</>;
   };
 
-  const { cart, totalQuantity, totalPrice } = useSelector((state) => state.cart);
+  const { cart } = useSelector((state) => state.cart);
   useEffect(() => {
     dispatch(getCartTotal());
   }, [cart]);
@@ -138,12 +114,6 @@ const BookDetail = () => {
   useEffect(() => {
     getBooks();
   }, [dispatch]);
-  const notify = () =>
-    toast(
-      <Link to="/cart" style={{ textDecoration: "none" }}>
-        "Product added to cart !"
-      </Link>
-    );
 
   return (
     <div id="bookdetail">
@@ -248,14 +218,7 @@ const BookDetail = () => {
               </div>
               <p>{book.reviewCount} customer reviews</p>
               <div className="plus">
-                <p>
-                  <td className='incDecButton'>
-                    <button className="fas fa-minus" onClick={() => dispatch(decreaseItemQuantity(book.id))} ></button>
-                    <span>1</span>
-                    <button className="fas fa-plus" onClick={() => dispatch(increaseItemQuantity(book.id))}></button>
-                  </td>
-                </p>
-                <span className="sebet" onClick={() => {
+                <span className="sebet" style={{ cursor: "pointer" }} onClick={() => {
                   dispatch(addToCart(book));
                 }}> Səbətə at</span>
               </div>
@@ -395,72 +358,6 @@ const BookDetail = () => {
               </TabPanel>
             </TabContext>
           </Box>
-        </div>
-        <div className="similar">
-          <div className="title">
-            <h4>Yazarın digər kitabları</h4>
-          </div>
-          <div className="books">
-            <div className="bottom">
-            <Carousel responsive={responsive}>
-                {
-                  data &&
-                  data.filter((x) => x.authorName === book.authorName)
-                    .map((e) => (
-                        <div className="containerr" key={e.id}>
-                          <div className="row align-items-center">
-                            <div className="col-lg-12">
-                              <div className="box">
-                                <div className="image">
-                                  <Link to={'/book/' + e.id}>
-                                    <img
-                                      src={`${FILE_PATH}${book.bookCover}`}
-                                      alt="kitab"
-                                    />
-                                  </Link>
-                                  <div className="icons">
-                                    <i className="fa-solid fa-heart icon" onClick={() => dispatch(addToFavories(book))}></i>
-                                    <br />
-                                    <i className="fa-solid fa-bag-shopping icon" onClick={() => dispatch(addToCart(book))}></i>
-                                  </div>
-                                </div>
-                                <div className="text">
-                                  <span className="box1 super">{book.name}</span>
-                                  <span className="box1 number">
-                                    {
-                                      book.isSale === true ? (
-                                        <>
-                                          <span>
-                                            <del> {book.price} AZN</del>
-                                          </span>
-                                          <span style={{ marginLeft: "10px" }}>
-                                            {book.salePrice} AZN
-                                          </span>
-                                        </>
-                                      ) : (
-                                        <>
-                                          <span>
-                                            {book.price} AZN
-                                          </span>
-                                        </>
-                                      )
-                                    }
-                                  </span>
-                                  <span className="sebet" onClick={() => {
-                                    dispatch(addToCart(book));
-                                    notify()
-                                  }}>Səbətə at</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      
-                    ))
-                }
-              </Carousel>
-            </div>
-          </div>
         </div>
       </div>
     </div >
